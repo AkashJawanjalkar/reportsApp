@@ -164,6 +164,7 @@
                 justifyContent="SpaceBetween"
                 width="100%"
             >
+            <!-- ////////////////////////////////////////   just id ADDED ID HERE AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA -->
                 <HBox id="fromToDateBoxId">
                     <m:MultiInput
                         id="packagingsiteInput"
@@ -308,7 +309,7 @@
                 </HBox>
 
 
-<!-- ============================================================== -->
+<!-- ===============================APIFILTER ===============================aaaaaaaaaaaaaaaaaaa-->
                 <HBox
                     id="SKUFilterBoxId"
                     visible="false"
@@ -387,7 +388,7 @@
                     </HBox>
                 </HBox>
 
-<!-- ========================================================= -->
+<!-- ========================================================= aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa-->
 
                 <m:HBox
                     id="iconbuttons"
@@ -409,7 +410,7 @@
                 </m:HBox>
             </m:HBox>
 
-<!-- ======================================= -->
+<!-- =======================================MAIN FILTERS AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA -->
             <VBox
                 id="SKUTabFilterBox"
                 class="sapUiMediumMargin"
@@ -653,7 +654,7 @@
                     </HBox>
                 </HBox>
             </VBox>
-<!-- =================================== -->
+<!-- =================================== aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa-->
 
 
             <HBox class="sapUiMediumMarginBegin">
