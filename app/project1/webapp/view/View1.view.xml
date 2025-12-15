@@ -1,0 +1,1151 @@
+<mvc:View
+    controllerName="project1.controller.View1"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns="sap.m"
+    xmlns:m="sap.m"
+    xmlns:core="sap.ui.core"
+    xmlns:l="sap.ui.layout"
+>
+    <m:Page
+        id="page"
+        title="Reports Dashboard"
+        enableScrolling="true"
+        showHeader="false"
+    >
+        <m:content>
+            <m:IconTabBar
+                id="cardsRow"
+                select=".onIconTabSelect"
+                class="sapUiResponsiveContentPadding sapUiSmallMarginBottom"
+                visible="true"
+                headerMode="Standard"
+                expandable="false"
+            >
+                <m:items>
+                    <m:IconTabFilter
+                        key="summary"
+                        icon="sap-icon://business-objects-experience"
+                        text="Packaging and Release Site Summary Report"
+                        design="Horizontal"
+                        visible="{ path: 'viewState>/roleFlags', formatter: '.fmt.showSummary' }"
+                    />
+
+                    <m:IconTabFilter
+                        key="track"
+                        icon="sap-icon://begin"
+                        iconColor="Positive"
+                        text="TrackWise Report"
+                        design="Horizontal"
+                        visible="{ path: 'viewState>/roleFlags', formatter: '.fmt.showTrack' }"
+                    />
+
+                    <m:IconTabFilter
+                        key="audit"
+                        icon="sap-icon://inspect"
+                        iconColor="Critical"
+                        text="Audit Trail Report"
+                        design="Horizontal"
+                        visible="{ path: 'viewState>/roleFlags', formatter: '.fmt.showAudit' }"
+                    />
+
+                    <m:IconTabFilter
+                        key="activity"
+                        icon="sap-icon://activity-items"
+                        iconColor="Neutral"
+                        text="Packaging and Release Site Activity"
+                        design="Horizontal"
+                        visible="{ path: 'viewState>/roleFlags', formatter: '.fmt.showActivity' }"
+                    />
+                    <m:IconTabFilter
+                        key="InactiveUsers"
+                        icon="sap-icon://group"
+                        iconColor="NonInteractive"
+                        text="View Inactive Users"
+                        design="Horizontal"
+                        visible="{ path: 'viewState>/roleFlags', formatter: '.fmt.showActivity' }"
+                    />
+
+                    <m:IconTabFilter
+                        key="SKUComponent"
+                        text="SKU Component"
+                        icon="sap-icon://product"
+                        iconColor="Positive"
+                        design="Horizontal"
+                    />
+                       
+                    
+
+                    <m:IconTabFilter
+                        key="CMSWIP"
+                        text="CMS Task Artwork WIP"
+                        icon="sap-icon://begin"
+                        iconColor="Critical"
+                        design="Horizontal"
+                    />
+                       
+                    
+
+                    <m:IconTabFilter
+                        key="CMSClosed"
+                        text="CMS Task Artwork Closed"
+                        icon="sap-icon://complete"
+                        iconColor="Negative"
+                        design="Horizontal"
+                    />
+                        
+                   
+                </m:items>
+            </m:IconTabBar>
+
+            <m:HBox
+                id="auditToggleBox"
+                alignItems="Center"
+                class="sapUiMediumMarginBegin"
+                visible="true"
+                justifyContent="Start"
+            >
+                <m:SegmentedButton
+                    id="auditToggleSelect"
+                    selectedKey="batch"
+                    selectionChange=".onAuditToggleChange"
+                    visible="{ path: 'viewState>/roleFlags', formatter: '.fmt.auditSegbVisible' }"
+                    enabled="{ path: 'viewState>/readOnly', formatter: '.fmt.enabled' }"
+                >
+                    <m:items>
+                        <m:SegmentedButtonItem
+                            text="Batch Data Audit Trail"
+                            key="batch"
+                            tooltip="Batch Data Audit Trail"
+                            width="200px"
+                        />
+                        <m:SegmentedButtonItem
+                            text="Packaging Site Maintenance Audit Trail"
+                            key="packaging"
+                            tooltip="Packaging Site Maintenance Audit Trail"
+                            width="300px"
+                        />
+                    </m:items>
+                </m:SegmentedButton>
+            </m:HBox>
+            <m:HBox
+                id="InactiveUserToggleBox"
+                alignItems="Center"
+                class="sapUiMediumMarginBegin"
+                visible="true"
+                justifyContent="Start"
+            >
+                <m:SegmentedButton
+                    id="InactiveUserSegmentButton"
+                    selectedKey="cmo"
+                    visible="false"
+                    selectionChange=".onInactiveUserSegmentChange"
+                >
+                    <m:items>
+                        <m:SegmentedButtonItem
+                            text="CMO User"
+                            key="cmo"
+                            tooltip="CMO User"
+                            width="120px"
+                        />
+                        <m:SegmentedButtonItem
+                            text="Viatris User"
+                            key="viatris"
+                            tooltip="Viatris User"
+                            width="120px"
+                        />
+                    </m:items>
+                </m:SegmentedButton>
+            </m:HBox>
+<!-- ///////////////////////////////////////////////// -->
+            <m:HBox
+                id="filterBar"
+                class="sapUiSmallMarginTop sapUiMediumMarginBegin  customFilterBarBg sapUiSmallMarginBottom"
+                alignItems="Center"
+                justifyContent="SpaceBetween"
+                width="100%"
+            >
+                <HBox id="fromToDateBoxId">
+                    <m:MultiInput
+                        id="packagingsiteInput"
+                        placeholder="Select Packaging Site(s)"
+                        showValueHelp="true"
+                        valueHelpRequest="onProductInputClick"
+                        tokenUpdate="onPackingSiteTokensUpdate"
+                        liveChange=".onPackingSiteBlockTyping"
+                        width="28rem"
+                        class="sapUiSmallMarginEnd"
+                        enabled="{ path: 'viewState>/readOnly', formatter: '.fmt.enabled' }"
+                    />
+
+                    <m:HBox
+                        id="fromDateInput"
+                        alignItems="Center"
+                        class="sapUiSmallMarginEnd"
+                    >
+                        <m:Label
+                            text="From Date:"
+                            class="sapUiSmallMarginEnd"
+                            required="true"
+                        />
+                        <m:DatePicker
+                            id="fromDate"
+                            width="150px"
+                            placeholder="dd/mm/yyyy"
+                            displayFormat="dd/MM/yyyy"
+                            valueFormat="yyyy-MM-dd"
+                            liveChange="onDateChangeManually"
+                            change=".onFromDateChange"
+                            class="sapUiSmallMarginEnd"
+                            enabled="{ path: 'viewState>/readOnly', formatter: '.fmt.enabled' }"
+                        />
+                    </m:HBox>
+
+                    <m:HBox
+                        id="toDateinput"
+                        alignItems="Center"
+                        class="sapUiSmallMarginEnd"
+                    >
+                        <m:Label
+                            text="To Date:"
+                            class="sapUiSmallMarginEnd"
+                            required="true"
+                        />
+                        <m:DatePicker
+                            id="toDate"
+                            width="150px"
+                            placeholder="dd/mm/yyyy"
+                            displayFormat="dd/MM/yyyy"
+                            valueFormat="yyyy-MM-dd"
+                            change=".onToDateChange"
+                            class="sapUiSmallMarginEnd"
+                            liveChange="onDateChangeManually"
+                            enabled="{ path: 'viewState>/readOnly', formatter: '.fmt.enabled' }"
+                        />
+                    </m:HBox>
+
+                    <m:HBox
+                        id="InactiveUserBox"
+                        alignItems="Center"
+                        class="sapUiSmallMarginEnd"
+                        visible="false"
+                    >
+                        <m:Label
+                            text="User ID:"
+                            class="sapUiSmallMarginEnd"
+                        />
+                        <m:Input
+                            id="InactiveUser"
+                            placeholder="Enter User ID"
+                            width="250px"
+                            liveChange=".onInactiveUserFilterByUserId"
+                        />
+                    </m:HBox>
+
+                    <HBox>
+                        <m:HBox
+                            id="changedByInput"
+                            alignItems="Center"
+                            class="sapUiSmallMarginEnd"
+                            visible="false"
+                        >
+                            <m:Label
+                                text="Email ID:"
+                                class="sapUiSmallMarginEnd"
+                            />
+                            <m:Input
+                                id="changedByBox"
+                                placeholder="Enter Email ID"
+                                width="250px"
+                                showValueHelp="true"
+                                valueHelpRequest=".onChangedByVH"
+                                liveChange=".onEmailBlockTyping"
+                                enabled="{ path: 'viewState>/readOnly', formatter: '.fmt.enabled' }"
+                            />
+                        </m:HBox>
+
+                        <m:HBox
+                            id="createdByInput"
+                            alignItems="Center"
+                            class="sapUiSmallMarginEnd"
+                            visible="false"
+                        >
+                            <m:Label
+                                text="Email ID:"
+                                class="sapUiSmallMarginEnd"
+                            />
+                            <m:Input
+                                id="createdByBox"
+                                placeholder="Enter Email ID"
+                                width="200px"
+                                liveChange=".onEmailBlockTyping"
+                                showValueHelp="true"
+                                valueHelpRequest=".onCreatedEmailByVH"
+                                enabled="{ path: 'viewState>/readOnly', formatter: '.fmt.enabled' }"
+                            />
+                        </m:HBox>
+                    </HBox>
+
+                    <m:HBox
+                        id="UserInactiveSiteBox"
+                        alignItems="Center"
+                        class="sapUiSmallMarginEnd"
+                        visible="false"
+                    >
+                        <m:Label
+                            text="Packagingggggggggggggggggg Site:"
+                            class="sapUiSmallMarginEnd"
+                        />
+
+                        <m:Input
+                            id="userspacks"
+                            placeholder="Select Packaging Site(s)"
+                            width="25rem"
+                            class="sapUiSmallMarginEnd"
+                            liveChange=".onInactiveUserFilterByUserId"
+                            enabled="{ path: 'viewState>/readOnly', formatter: '.fmt.enabled' }"
+                        />
+                    </m:HBox>
+                </HBox>
+
+
+<!-- ============================================================== -->
+                <HBox
+                    id="SKUFilterBoxId"
+                    visible="false"
+                    alignItems="Center"
+                    wrap="NoWrap"
+                    gap="2rem"
+                >
+                    <HBox
+                        alignItems="Center"
+                        wrap="NoWrap"
+                        gap="0.5rem"
+                    >
+                        <Label
+                            text="Packaging Site :"
+                            class="compactLabel"
+                            labelFor="SKUPkgSiteId"
+                        />
+                        <Input
+                            id="SKUPkgSiteId"
+                            placeholder="Select Packaging Site"
+                            showValueHelp="true"
+                            valueHelpRequest=".onValueHelpRequest"
+                            liveChange=".onPreventManualTyping"
+                            width="300px"
+                        >
+                            <suggestionItems>
+                                <core:Item
+                                    text="{oPkgSite>actualPackagingSite}"
+                                />
+                            </suggestionItems>
+                        </Input>
+                    </HBox>
+
+                    <HBox
+                        alignItems="Center"
+                        wrap="NoWrap"
+                        id="SKURadioButtonBoxId"
+                        gap="0.5rem"
+                    >
+                        <Label
+                            text="Select Site Type:"
+                            labelFor="SKURadioButtonId"
+                        />
+                        <RadioButtonGroup
+                            id="SKURadioButtonId"
+                            columns="2"
+                            valueState="Information"
+                            class="sapUiSizeCompact"
+                        >
+                            <RadioButton
+                                text="Actual Packaging Site"
+                                selected="true"
+                            />
+                            <RadioButton text="Actual Release Site" />
+                        </RadioButtonGroup>
+                    </HBox>
+
+                    <HBox
+                        alignItems="Center"
+                        wrap="NoWrap"
+                        gap="0.5rem"
+                        id="DateRangeBoxId"
+                    >
+                        <Label
+                            text="Date Range:"
+                            class="compactLabel"
+                            labelFor="CMSWIPDataRangeId"
+                        />
+                        <DateRangeSelection
+                            id="CMSWIPDataRangeId"
+                            width="250px"
+                            valueFormat="yyyy-MM-dd"
+                            displayFormat="dd/MM/yyyy"
+                            class="sapUiSizeCompact"
+                        />
+                    </HBox>
+                </HBox>
+
+<!-- ========================================================= -->
+
+                <m:HBox
+                    id="iconbuttons"
+                    class="sapUiMediumMarginEnd"
+                >
+                    <m:Button
+                        text="Go"
+                        type="Emphasized"
+                        press=".onPressGo"
+                        class="sapUiTinyMarginEnd"
+                        id="goButton"
+                    />
+                    <m:Button
+                        text="Reset"
+                        type="Reject"
+                        press=".onFilterReset"
+                       
+                    />
+                </m:HBox>
+            </m:HBox>
+
+<!-- ======================================= -->
+            <VBox
+                id="SKUTabFilterBox"
+                class="sapUiMediumMargin"
+                visible="false"
+            >
+                <HBox
+                    alignItems="Center"
+                    justifyContent="SpaceBetween"
+                    width="100%"
+                >
+                    <HBox
+                        alignItems="Center"
+                        justifyContent="Start"
+                    >
+                        <HBox
+                            alignItems="Center"
+                            class="sapUiSmallMarginEnd"
+                        >
+                            <Label
+                                text="Global SPC Code:"
+                                class="sapUiTinyMarginEnd"
+                            />
+                            <Input
+                                id="filterGlobalSPCCode"
+                                width="160px"
+                                liveChange=".onSKUTabFilter"
+                            />
+                        </HBox>
+
+                        <HBox
+                            alignItems="Center"
+                            class="sapUiSmallMarginEnd"
+                        >
+                            <Label
+                                text="Packing Site SKU:"
+                                class="sapUiTinyMarginEnd"
+                            />
+                            <Input
+                                id="filterPackingSiteSKU"
+                                width="160px"
+                                liveChange=".onSKUTabFilter"
+                            />
+                        </HBox>
+
+                        <HBox
+                            alignItems="Center"
+                            class="sapUiSmallMarginEnd"
+                        >
+                            <Label
+                                text="Packing Site Code:"
+                                class="sapUiTinyMarginEnd"
+                            />
+                            <Input
+                                id="filterPackingSiteCode"
+                                width="160px"
+                                liveChange=".onSKUTabFilter"
+                            />
+                        </HBox>
+                    </HBox>
+
+                    <HBox
+                        alignItems="Center"
+                        justifyContent="End"
+                        width="auto"
+                    >
+                        <Button
+                            text="Reset"
+                            type="Reject"
+                            press=".onResetSKUFilters"
+                            class="sapUiSmallMarginEnd"
+                        />
+                    </HBox>
+                </HBox>
+
+                <HBox
+                    alignItems="Center"
+                    class="sapUiSmallMarginEnd sapUiSmallMarginTop"
+                    gap="0.5rem"
+                >
+                    <Label
+                        text="Implementation Deadline:"
+                        class="sapUiTinyMarginEnd"
+                        labelFor="ImplementationDeadlineID"
+                    />
+
+                    <DateRangeSelection
+                        id="ImplementationDeadlineID"
+                        width="250px"
+                        valueFormat="yyyy-MM-dd"
+                        displayFormat="yyyy-MM-dd"
+                        placeholder="Select date range"
+                        change=".onSKUTabFilter"
+                        liveChange="onPreventManualTyping"
+                    />
+                </HBox>
+            </VBox>
+
+            <VBox
+                id="dynamicFiltersCMSWIP"
+                class="sapUiMediumMargin"
+                visible="false"
+            >
+                <HBox
+                    alignItems="Center"
+                    justifyContent="SpaceBetween"
+                    width="100%"
+                >
+                    <HBox
+                        alignItems="Center"
+                        justifyContent="Start"
+                    >
+                        <HBox
+                            alignItems="Center"
+                            class="sapUiSmallMarginEnd"
+                        >
+                            <Label
+                                text="Global SPC Code(s):"
+                                class="sapUiTinyMarginEnd"
+                            />
+                            <Input
+                                id="cmsWIPFilterGlobalSPC"
+                                width="150px"
+                                liveChange=".onFilterCMSWIP"
+                            />
+                        </HBox>
+
+                        <HBox
+                            alignItems="Center"
+                            class="sapUiSmallMarginEnd"
+                        >
+                            <Label
+                                text="Packing Site Code:"
+                                class="sapUiTinyMarginEnd"
+                            />
+                            <Input
+                                id="cmsWIPFilterPackingSiteCode"
+                                width="150px"
+                                liveChange=".onFilterCMSWIP"
+                            />
+                        </HBox>
+
+                        <HBox
+                            alignItems="Center"
+                            class="sapUiSmallMarginEnd"
+                        >
+                            <Label
+                                text="Packing Site SKU:"
+                                class="sapUiTinyMarginEnd"
+                            />
+                            <Input
+                                id="cmsWIPFilterPackingSiteSKU"
+                                width="150px"
+                                liveChange=".onFilterCMSWIP"
+                            />
+                        </HBox>
+                    </HBox>
+
+                    <HBox
+                        alignItems="Center"
+                        justifyContent="End"
+                        width="auto"
+                    >
+                        <Button
+                            text="Reset"
+                            type="Reject"
+                            press=".onSummaryFilterResetCMSWIP"
+                        />
+                    </HBox>
+                </HBox>
+            </VBox>
+
+            <VBox
+                id="dynamicFiltersCMSClosed"
+                class="sapUiMediumMargin"
+                visible="false"
+            >
+                <HBox
+                    alignItems="Center"
+                    justifyContent="SpaceBetween"
+                    width="100%"
+                >
+                    <HBox
+                        alignItems="Center"
+                        justifyContent="Start"
+                    >
+                        <HBox
+                            alignItems="Center"
+                            class="sapUiSmallMarginEnd"
+                        >
+                            <Label
+                                text="Global SPC Code(s):"
+                                class="sapUiTinyMarginEnd"
+                            />
+                            <Input
+                                id="cmsClosedFilterGlobalSPC"
+                                width="150px"
+                                liveChange=".onFilterCMSClosed"
+                            />
+                        </HBox>
+
+                        <HBox
+                            alignItems="Center"
+                            class="sapUiSmallMarginEnd"
+                        >
+                            <Label
+                                text="Packing Site Code:"
+                                class="sapUiTinyMarginEnd"
+                            />
+                            <Input
+                                id="cmsClosedFilterPackingSiteCode"
+                                width="150px"
+                                liveChange=".onFilterCMSClosed"
+                            />
+                        </HBox>
+
+                        <HBox
+                            alignItems="Center"
+                            class="sapUiSmallMarginEnd"
+                        >
+                            <Label
+                                text="Packing Site SKU:"
+                                class="sapUiTinyMarginEnd"
+                            />
+                            <Input
+                                id="cmsClosedFilterPackingSiteSKU"
+                                width="150px"
+                                liveChange=".onFilterCMSClosed"
+                            />
+                        </HBox>
+                    </HBox>
+
+                    <HBox
+                        alignItems="Center"
+                        justifyContent="End"
+                    >
+                        <Button
+                            text="Reset"
+                            type="Reject"
+                            press=".onFilterResetCMSClosed"
+                        />
+                    </HBox>
+                </HBox>
+            </VBox>
+<!-- =================================== -->
+
+
+            <HBox class="sapUiMediumMarginBegin">
+                <m:HBox
+                    id="packagingSiteBox"
+                    alignItems="Center"
+                    class="sapUiSmallMarginEnd"
+                    visible="false"
+                >
+                    <m:Label
+                        text="Packaging========> Site:"
+                        class="sapUiSmallMarginEnd"
+                    />
+                    <m:MultiInput
+                        id="packagingsite"
+                        placeholder="Select Packaging Site(s)"
+                        showValueHelp="true"
+                        valueHelpRequest="onPackagingInput"
+                        tokenUpdate="onPackingSiteTokensReport"
+                        liveChange=".onPackingSiteBlockTyping"
+                        width="15rem"
+                        class="sapUiSmallMarginEnd"
+                        enabled="{ path: 'viewState>/readOnly', formatter: '.fmt.enabled' }"
+                    />
+                </m:HBox>
+            </HBox>
+
+            <HBox
+                id="InactiveUserTableBox"
+                visible="false"
+                class="sapUiSmallMargin"
+            >
+                <Table
+                    id="inactiveUsersTable"
+                    items="{JSONModel>/inactiveUsers}"
+                    width="100%"
+                    inset="false"
+                    class="sapUiResponsiveMargin"
+                    growing="true"
+                    growingThreshold="50"
+                >
+                    <headerToolbar>
+                        <Toolbar>
+                            <Title text="Inactive Users" />
+                            <ToolbarSpacer />
+                            <Button
+                                text="Download"
+                                press="onDownloadUsers"
+                                class="sapUiSmallMarginEnd"
+                                type="Emphasized"
+                            />
+                        </Toolbar>
+                    </headerToolbar>
+
+                    <columns>
+                        <Column hAlign="Begin">
+                            <Text text="User ID" />
+                        </Column>
+                        <Column
+                            minScreenWidth="Tablet"
+                            demandPopin="true"
+                        >
+                            <Text text="Packaging Sites" />
+                        </Column>
+                    </columns>
+
+                    <items>
+                        <ColumnListItem vAlign="Middle">
+                            <cells>
+                                <HBox
+                                    alignItems="Center"
+                                    renderType="Bare"
+                                >
+                                    <ObjectIdentifier
+                                        title="{JSONModel>userId}"
+                                    />
+                                </HBox>
+
+                                <Text
+                                    text="{JSONModel>packagingSites}"
+                                    wrapping="true"
+                                    maxLines="4"
+                                />
+                            </cells>
+                        </ColumnListItem>
+                    </items>
+                </Table>
+            </HBox>
+
+            <m:VBox
+                id="summaryFilterBar"
+                class="sapUiTinyMarginTop sapUiTinyMarginBottom sapUiContentPadding sapUiMediumMarginBegin icons"
+                visible="false"
+            >
+                <m:HBox
+                    alignItems="Center"
+                    justifyContent="SpaceBetween"
+                    class="sapUiTinyMarginBottom"
+                >
+                    <m:HBox
+                        alignItems="Center"
+                        justifyContent="Start"
+                    >
+                        <m:Label
+                            text="Batch No:"
+                            class="sapUiTinyMarginEnd"
+                        />
+                        <m:Input
+                            id="filterBatchNo"
+                            width="150px"
+                            liveChange=".onSummaryFilter"
+                        />
+
+                        <m:Label
+                            text="Component Code:"
+                            class="sapUiTinyMarginBegin sapUiTinyMarginEnd"
+                        />
+                        <m:Input
+                            id="filterCompCode"
+                            width="150px"
+                            liveChange=".onSummaryFilter"
+                        />
+
+                        <m:Label
+                            text="Packaging Site ID - Name:"
+                            class="sapUiTinyMarginBegin sapUiTinyMarginEnd"
+                        />
+                        <m:Input
+                            id="filterSite"
+                            width="150px"
+                            liveChange=".onSummaryFilter"
+                        />
+
+                        <m:Label
+                            text="Created By:"
+                            class="sapUiTinyMarginBegin sapUiTinyMarginEnd"
+                        />
+                        <m:Input
+                            id="filterCreatedBy"
+                            width="150px"
+                            liveChange=".onSummaryFilter"
+                        />
+                    </m:HBox>
+
+                    <m:HBox
+                        alignItems="Center"
+                        justifyContent="End"
+                    >
+                        <m:Button
+                            text="Add Filter"
+                            icon="sap-icon://add-filter"
+                            press=".onAddFilterPress"
+                            class="sapUiTinyMarginBegin sapUiSmallMarginEnd"
+                        />
+                        <m:Button
+                            text="Reset"
+                            type="Reject"
+                            press=".onSummaryFilterReset"
+                            class="sapUiTinyMarginBegin sapUiSmallMarginEnd"
+                        />
+                    </m:HBox>
+                </m:HBox>
+
+                <m:VBox id="filterRows" />
+            </m:VBox>
+
+            <m:VBox
+                id="trackFilterBar"
+                class="sapUiTinyMarginTop sapUiTinyMarginBottom sapUiContentPadding sapUiMediumMarginBegin icons"
+                visible="false"
+            >
+                <m:HBox
+                    alignItems="Center"
+                    justifyContent="SpaceBetween"
+                    class="sapUiTinyMarginBottom"
+                >
+                    <m:HBox
+                        alignItems="Center"
+                        justifyContent="Start"
+                    >
+                        <m:Label
+                            text="Component Code"
+                            class="sapUiTinyMarginEnd"
+                        />
+                        <m:Input
+                            id="trackPackgingSiteComponentCode"
+                            width="150px"
+                            liveChange=".onTrackFilter"
+                        />
+
+                        <m:Label
+                            text="Batch No. of First Packaging"
+                            class="sapUiTinyMarginBegin sapUiTinyMarginEnd"
+                        />
+                        <m:Input
+                            id="trackBatchNoOfFirstPackaging"
+                            width="150px"
+                            liveChange=".onTrackFilter"
+                        />
+
+                        <m:Label
+                            text="Batch No. of First Release"
+                            class="sapUiTinyMarginBegin sapUiTinyMarginEnd"
+                        />
+                        <m:Input
+                            id="trackBatchNoOfFirstRelease"
+                            width="150px"
+                            liveChange=".onTrackFilter"
+                        />
+                    </m:HBox>
+
+                    <m:HBox
+                        alignItems="Center"
+                        justifyContent="End"
+                    >
+                        <m:Button
+                            text="Add Filter"
+                            icon="sap-icon://add-filter"
+                            press=".onTrackAddFilter"
+                            class="sapUiTinyMarginBegin sapUiSmallMarginEnd"
+                        />
+                        <m:Button
+                            text="Reset"
+                            type="Reject"
+                            press=".onTrackFilterReset"
+                            class="sapUiTinyMarginBegin sapUiSmallMarginEnd"
+                        />
+                    </m:HBox>
+                </m:HBox>
+
+                <m:VBox id="trackFilterRows" />
+            </m:VBox>
+
+            <m:VBox
+                id="auditFilterBar"
+                class="sapUiTinyMarginTop sapUiTinyMarginBottom sapUiContentPadding sapUiMediumMarginBegin"
+                visible="false"
+            >
+                <m:HBox
+                    alignItems="Center"
+                    justifyContent="SpaceBetween"
+                >
+                    <m:HBox
+                        id="auditDefaultRow"
+                        alignItems="Center"
+                        justifyContent="Start"
+                    >
+                        <m:Label
+                            text="Batch No:"
+                            class="sapUiTinyMarginEnd"
+                        />
+                        <m:Input
+                            id="auditBatchNo"
+                            width="150px"
+                            liveChange=".onAuditFilter"
+                        />
+
+                        <m:Label
+                            text="Created By:"
+                            class="sapUiTinyMarginBegin sapUiTinyMarginEnd"
+                        />
+                        <m:Input
+                            id="auditCreatedBy"
+                            width="150px"
+                            liveChange=".onAuditFilter"
+                        />
+
+                        <m:Label
+                            text="Component Code:"
+                            class="sapUiTinyMarginBegin sapUiTinyMarginEnd"
+                        />
+                        <m:Input
+                            id="auditCompCode"
+                            width="150px"
+                            liveChange=".onAuditFilter"
+                        />
+                    </m:HBox>
+
+                    <m:HBox
+                        alignItems="Center"
+                        justifyContent="End"
+                    >
+                        <m:Button
+                            text="Add Filter"
+                            icon="sap-icon://add-filter"
+                            press=".onAuditAddFilter"
+                            class="sapUiTinyMarginBegin sapUiSmallMarginEnd"
+                        />
+                        <m:Button
+                            text="Reset"
+                            type="Reject"
+                            press=".onAuditFilterReset"
+                            class="sapUiTinyMarginBegin sapUiSmallMarginEnd"
+                        />
+                    </m:HBox>
+                </m:HBox>
+
+                <m:VBox id="auditFilterRows" />
+            </m:VBox>
+
+            <m:VBox
+                id="activityFilterBar"
+                class="sapUiTinyMarginTop sapUiTinyMarginBottom sapUiContentPadding sapUiMediumMarginBegin icons"
+                visible="false"
+                renderType="Bare"
+                width="100%"
+            >
+                <m:HBox
+                    alignItems="Center"
+                    justifyContent="SpaceBetween"
+                    class="sapUiSmallMarginTop sapUiMediumMarginBegin  sapUiMediumMarginEnd customFilterBarBg sapUiSmallMarginBottom"
+                >
+                    <HBox>
+                        <m:Label
+                            text="Packaging=========> Site:"
+                            class="sapUiTinyMarginTop sapUiTinyMarginBottom"
+                        />
+                        <m:Input
+                            id="activityPkgSite"
+                            width="150px"
+                            liveChange=".onActivityFilter"
+                            class="sapUiSmallMarginEnd"
+                        />
+
+                        <m:Label
+                            text="Packaging Site Name:"
+                            class="sapUiTinyMarginTop sapUiTinyMarginBottom"
+                        />
+                        <m:Input
+                            id="activityCreatedBy"
+                            width="150px"
+                            liveChange=".onActivityFilter"
+                            class="sapUiSmallMarginEnd"
+                        />
+
+                        <m:Label
+                            text="Days From Today:"
+                            class="sapUiTinyMarginTop sapUiTinyMarginBottom"
+                        />
+                        <m:Input
+                            id="activityDaysFromToday"
+                            type="Number"
+                            width="150px"
+                            liveChange=".onActivityFilter"
+                            class="sapUiSmallMarginEnd"
+                        />
+                    </HBox>
+                    <HBox>
+                        <m:Button
+                            text="Reset"
+                            type="Reject"
+                            class="sapUiTinyMarginBegin sapUiMediumMarginEnd"
+                            press=".onActivityFilterReset"
+                        />
+                    </HBox>
+                </m:HBox>
+
+                <m:HBox
+                    alignItems="Center"
+                    justifyContent="Start"
+                    class="sapUiTinyMarginBottom sapUiMediumMarginBegin"
+                >
+                    <m:Label
+                        text="Last Activity Date Range:"
+                        class="sapUiTinyMarginTop sapUiTinyMarginBottom"
+                    />
+                    <m:DateRangeSelection
+                        id="activityLastActivityDateRange"
+                        width="220px"
+                        displayFormat="dd/MM/yyyy"
+                        valueFormat="dd/MM/yyyy"
+                        change=".onActivityFilter"
+                        class="sapUiSmallMarginEnd"
+                    />
+
+                    <m:Label
+                        text="Today Date Range:"
+                        class="sapUiTinyMarginTop sapUiTinyMarginBottom"
+                    />
+                    <m:DateRangeSelection
+                        id="activityTodayDateRange"
+                        width="220px"
+                        displayFormat="dd/MM/yyyy"
+                        valueFormat="dd/MM/yyyy"
+                        change=".onActivityFilter"
+                        class="sapUiSmallMarginEnd"
+                    />
+                </m:HBox>
+            </m:VBox>
+            <m:VBox
+                id="auditPackagingFilterBar"
+                class="sapUiTinyMarginTop sapUiTinyMarginBottom sapUiContentPadding sapUiMediumMarginBegin"
+                visible="false"
+            >
+                <m:HBox
+                    alignItems="Center"
+                    justifyContent="SpaceBetween"
+                    class="sapUiTinyMarginBottom"
+                >
+                    <m:HBox
+                        alignItems="Center"
+                        justifyContent="Start"
+                    >
+                        <m:Label
+                            text="Changed By:"
+                            class="sapUiTinyMarginEnd"
+                        />
+                        <m:Input
+                            id="packChangedBy"
+                            width="160px"
+                            liveChange=".onAuditPackagingFilter"
+                        />
+
+                        <m:Label
+                            text="Changed At:"
+                            class="sapUiTinyMarginBegin sapUiTinyMarginEnd"
+                        />
+                        <m:DateRangeSelection
+                            id="packChangedAtRange"
+                            width="220px"
+                            displayFormat="dd/MM/yyyy"
+                            valueFormat="dd/MM/yyyy"
+                            change=".onAuditPackagingFilter"
+                        />
+
+                        <m:Label
+                            text="Action:"
+                            class="sapUiTinyMarginBegin sapUiTinyMarginEnd"
+                        />
+                        <m:Input
+                            id="packAction"
+                            width="140px"
+                            liveChange=".onAuditPackagingFilter"
+                        />
+
+                        <m:Label
+                            text="Field Name:"
+                            class="sapUiTinyMarginBegin sapUiTinyMarginEnd"
+                        />
+                        <m:Input
+                            id="packFieldName"
+                            width="160px"
+                            liveChange=".onAuditPackagingFilter"
+                        />
+
+                        <m:Label
+                            text="Old Value:"
+                            class="sapUiTinyMarginBegin sapUiTinyMarginEnd"
+                        />
+                        <m:Input
+                            id="packOldValue"
+                            width="160px"
+                            liveChange=".onAuditPackagingFilter"
+                        />
+
+                        <!-- <m:Label text="New Value:" class="sapUiTinyMarginBegin sapUiTinyMarginEnd"/>
+      <m:Input id="packNewValue" width="160px" liveChange=".onAuditPackagingFilter"/> -->
+                    </m:HBox>
+
+                    <m:HBox
+                        alignItems="Center"
+                        justifyContent="End"
+                    >
+                        <m:Button
+                            text="Reset"
+                            type="Reject"
+                            press=".onAuditPackagingFilterReset"
+                            class="sapUiTinyMarginBegin sapUiSmallMarginEnd"
+                        />
+                    </m:HBox>
+                </m:HBox>
+                <m:HBox
+                    alignItems="Center"
+                    justifyContent="Start"
+                    class="sapUiTinyMarginBottom"
+                >
+                    <m:Label
+                        text="New Value:"
+                        class="sapUiTinyMarginBegin sapUiTinyMarginEnd"
+                    />
+                    <m:Input
+                        id="packNewValue"
+                        width="160px"
+                        liveChange=".onAuditPackagingFilter"
+                    />
+                </m:HBox>
+            </m:VBox>
+
+            <m:VBox
+                id="tableContainer"
+                class="sapUiSmallMarginTop sapUiSmallMarginButtom icons"
+            />
+        </m:content>
+    </m:Page>
+</mvc:View>

@@ -1,0 +1,19 @@
+<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core">
+    <SelectDialog
+        id="packagingSiteDialog"
+        title="Select Packaging Site"
+        items="{JSONModel>/packingSitesWithSelectAll}"
+        search="onPackingSiteSearch"
+        confirm="onPackingSiteSelect"
+        cancel="onPackingSiteCancel"
+        multiSelect="true"
+        selectionChange="onPackingSiteSelectionChange"
+        noDataText="No packaging sites available">
+        
+        <items>
+            <StandardListItem
+    title="{JSONModel>packingSiteId}"   />
+
+        </items>
+    </SelectDialog>
+</core:FragmentDefinition>

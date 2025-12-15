@@ -1,0 +1,6 @@
+/* Enter your custom styles here */
+.btnLarge > .sapMBtnInner {
+    font-size: 2rem !important;  /* bigger icon */
+    line-height: 3rem !important;
+}
+

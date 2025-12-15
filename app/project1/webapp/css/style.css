@@ -1,0 +1,71 @@
+Enter your custom styles here
+
+/* Odd rows */
+.customDataTable .sapMListTblRow:nth-child(odd) {
+    background-color: #f5f4f4 !important;
+}
+
+/* Even rows */
+.customDataTable .sapMListTblRow:nth-child(even) {
+    background-color: #dad5d5 !important;
+}
+
+/* Wrap row text */
+.wrapText .sapMListTblCell {
+    white-space: normal !important;
+    line-height: normal !important;
+    word-break: break-word !important;
+}
+
+/* Wrap header text */
+.customDataTable .sapMListTblHeaderCell .sapMLabel {
+    white-space: normal !important;
+    word-break: break-word !important;
+}
+
+.sapMPage {
+    background-color: var(--sapBackgroundColor);
+}
+
+.toolbarHeader {
+    padding: 0 1rem;
+}
+
+.filtersBar {
+    padding: 0.5rem 1rem;
+    border-bottom: 1px solid var(--sapList_BorderColor);
+}
+
+.filtersBar .sapMLabel {
+    margin-right: 0.5rem;
+}
+
+.reportsContent {
+    gap: 0.5rem;
+}
+
+.placeholderBox {
+    padding: 2rem 1rem;
+}
+
+
+.noVerticalGap {
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+#filterRows > .sapMFlexBox {
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+    padding: 0 !important;
+}
+
+
+/* in your CSS file */
+.noVerticalGap {
+    margin-bottom: 0 !important;
+}
+.sapUiSmallMarginEnd {
+    margin-right: 0.75rem !important;
+}
+

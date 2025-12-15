@@ -1,0 +1,40 @@
+<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core">
+  <Dialog
+      id="packingSiteDialog"
+      title="Select Packing Site"
+      contentHeight="50rem"
+      contentWidth="35rem"
+      stretchOnPhone="true">
+    <customHeader>
+      <Toolbar>
+        <Title text="Select Packing Site" />
+        <ToolbarSpacer/>
+        <SearchField
+          width="14rem"
+          liveChange=".onPackingSiteSearch"
+          placeholder="Search"/>
+        <Button text="Select All" type="Emphasized" press=".onPackingSiteSelectAll"/>
+        <Button text="Clear" press=".onPackingSiteClearAll"/>
+      </Toolbar>
+    </customHeader>
+
+    <content>
+      <List
+        id="packingSiteList"
+        mode="MultiSelect"
+        includeItemInSelection="true"
+        items="{JSONModel>/sites}">
+        <StandardListItem
+          title="{JSONModel>packingSiteId}"
+          description="{JSONModel>packingSiteName}" />
+      </List>
+    </content>
+
+    <beginButton>
+      <Button text="OK" press=".onPackingSiteDialogOk"/>
+    </beginButton>
+    <endButton>
+      <Button text="Cancel" press=".onPackingSiteDialogCancel"/>
+    </endButton>
+  </Dialog>
+</core:FragmentDefinition>

@@ -1,0 +1,13 @@
+<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core">
+  <SelectDialog
+      id="emailByVH"
+      title="Select User(s)"
+      search=".onEmailActByVHSearch"
+      liveChange=".onEmailByVHSearch"
+      confirm=".onEmailByVHConfirm"
+      cancel=".onEmailByVHCancel"
+      items="{JSONModel>/aUserList}">
+    <StandardListItem
+      title="{JSONModel>USERID}"/>
+  </SelectDialog>
+</core:FragmentDefinition>
