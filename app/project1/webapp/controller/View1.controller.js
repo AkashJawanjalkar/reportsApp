@@ -21,7 +21,7 @@ sap.ui.define([
 
     return Controller.extend("project1.controller.View1", {
         onInit: function () {
-            this.getView().setModel(new sap.ui.model.json.JSONModel({ sites: [], selectedPackingSites: [], inactiveUsers: [], inactiveUsersCMO: [], inactiveUsersViatris: [], selectedPackingReport: [] }), "JSONModel");
+            this.getView().setModel(new sap.ui.model.json.JSONModel({ sites: [], selectedPackingSites: [], inactiveUsers: [], inactiveUsersCMO: [], inactiveUsersViatris: [], selectedPackingReport: [] , aSKUData: [], aCMSWip: [], aCMSClose: [] }), "JSONModel");
             this.getView().setModel(new JSONModel({
                 roleFlags: { isSuper: false, isCMO: false, isViewer: false, isAuditor: false },
                 readOnly: true
@@ -29,7 +29,22 @@ sap.ui.define([
 
 
             //=======================================================================================
-            const pgkSite = new JSONModel({
+           
+
+
+            // const obj = new JSONModel({ aSKUData: [], aCMSWip: [], aCMSClose: [] });
+            // this.getView().setModel(obj, "sku");
+            // this._aOriginalSKUData = [];
+            // this._aOriginalCMSWipData = [];
+            // this._aOriginalCMSClosed = [];
+
+            
+
+
+
+
+
+             const pgkSite = new JSONModel({
                 aActualPkgSite: [
                     { actualPackagingSite: "ABT Spain (ES)" },
                     { actualPackagingSite: "ABC Pharma (UK)" },
@@ -40,18 +55,7 @@ sap.ui.define([
 
             this.getView().setModel(pgkSite, "oPkgSite");
 
-
-            const obj = new JSONModel({ aSKUData: [], aCMSWip: [], aCMSClose: [] });
-            this.getView().setModel(obj, "sku");
-            this._aOriginalSKUData = [];
-            this._aOriginalCMSWipData = [];
-            this._aOriginalCMSClosed = [];
-
-            this._exportTitle = {
-                SKUDownloadButton: "SKU Component",
-                CMSWIPDownloadBId: "CMS Task Work WIP",
-                CMSCloseDownloadBId: "CMS Task Artwork Closed"
-            }
+           
             //===================================================================================================
 
             // const sServiceUrl = this.getOwnerComponent().getModel("UserInfoServiceModel").sServiceUrl;
@@ -902,7 +906,7 @@ sap.ui.define([
             else if (sKey === "SKUComponent") {
                 this._LoadSKUComponentData();
 
-                const aSKUData = this._aOriginalSKUData;
+                const aSKUData = this._filteredData.aSKUData;
              //   console.log("aSKU Data : ", aSKUData);
                 this._createTable("SKUComponent", aSKUData);
             }
@@ -910,7 +914,7 @@ sap.ui.define([
             else if (sKey === "CMSWIP") {
 
                 this._LoadCMSWIPData();
-                const aCMSWIPData = this._aOriginalCMSWipData;
+                const aCMSWIPData = this._filteredData.aCMSWip;
             //    console.log("aSKU Data : ", aCMSWIPData);
                 this._createTable("CMSWIP", aCMSWIPData);
                 this.byId("tableContainer").setVisible(true);
@@ -919,7 +923,7 @@ sap.ui.define([
             }
             else if (sKey === "CMSClosed") {
                 this._LoadCMSClosedData();
-                const aCMSClosedData = this._aOriginalCMSClosed;
+                const aCMSClosedData =   this._filteredData.aCMSClose;
            //     console.log("CMS Closed : ", aCMSClosedData);
                 this._createTable("CMSClosed", aCMSClosedData);
                 this.byId("dynamicFiltersCMSClosed").setVisible(true);
@@ -1073,8 +1077,8 @@ sap.ui.define([
                 }
             ]
 
-            this._aOriginalCMSClosed = data;
-            this.getView().getModel("sku").setProperty("/aCMSClose", data);
+            this._filteredData.aCMSClose = data;
+            this.getView().getModel("JSONModel").setProperty("/aCMSClose", data); ////////sku------------------------------------------------------------------------------------------>
 
             console.log("closed-------------------------->", data);
 
@@ -1168,8 +1172,8 @@ sap.ui.define([
                     "changeDescription": "Regulatory update"
                 }
             ]
-            this._aOriginalCMSWipData = data;
-            this.getView().getModel("sku").setProperty("/aCMSWip", data)
+           this._filteredData.aCMSWip = data;
+            this.getView().getModel("JSONModel").setProperty("/aCMSWip", data)    //// sku--------------------------------------------------------------------------------->
 
 
         },
@@ -1458,8 +1462,8 @@ sap.ui.define([
                 }
             ]
 
-            this._aOriginalSKUData = data;
-            this.getView().getModel("sku").setProperty("/aSKUData", data);
+              this._filteredData.aSKUData = data;
+            this.getView().getModel("JSONModel").setProperty("/aSKUData", data);////sku--------------------------------------------------------------------------------------->
              this.byId("SKUTabFilterBox").setVisible(true);
             this.byId("tableContainer").setVisible(true);
 
@@ -3626,8 +3630,8 @@ sap.ui.define([
             var oStartDate = oDateRange.getDateValue();
             var oEndDate = oDateRange.getSecondDateValue();
 
-            var aSource = this._aOriginalSKUData;
-            var oModel = this.getView().getModel("sku");
+            var aSource = this._filteredData.aSKUData;
+            var oModel = this.getView().getModel("JSONModel");  //////sku-------------------------------------------------------------------------------------------------------------------->
 
             if (!sGlobalSPCCode && !sPackingSiteSKU && !sPackingSiteCode && !oStartDate && !oEndDate) {
                 oModel.setProperty("/aSKUData", aSource);
@@ -3671,10 +3675,10 @@ sap.ui.define([
             this.byId("ImplementationDeadlineID").setValue("");
 
 
-            const oModel = this.getView().getModel("sku");
-            oModel.setProperty("/aSKUData", this._aOriginalSKUData);
+            const oModel = this.getView().getModel("JSONModel");/////sku----------------------------------------------------------------------------------------------------------------------------->
+            oModel.setProperty("/aSKUData", this._filteredData.aSKUData);
 
-            this._createTable("SKUComponent", this._aOriginalSKUData);
+            this._createTable("SKUComponent",this._filteredData.aSKUData);
             console.log("Filters Reset — Full SKU data restored");
         },
 
@@ -3762,8 +3766,8 @@ sap.ui.define([
             var sPackingSiteSKU = (this.byId("cmsWIPFilterPackingSiteSKU").getValue() || "").trim().toLowerCase();
             var sPackingSiteCode = (this.byId("cmsWIPFilterPackingSiteCode").getValue() || "").trim().toLowerCase();
 
-            var aSource = this._aOriginalCMSWipData;
-            var oModel = this.getView().getModel("sku");
+            var aSource = this._filteredData.aCMSWip;
+            var oModel = this.getView().getModel("JSONModel");/////sku-------------------------------------------------------------------------------------------------------->
 
 
             if (!sGlobalSPCCode && !sPackingSiteSKU && !sPackingSiteCode) {
@@ -3790,10 +3794,10 @@ sap.ui.define([
             this.byId("cmsWIPFilterPackingSiteSKU").setValue("");
             this.byId("cmsWIPFilterPackingSiteCode").setValue("");
 
-            const oModel = this.getView().getModel("sku");
-            oModel.setProperty("/aCMSWip", this._aOriginalCMSWipData);
+            const oModel = this.getView().getModel("JSONModel");//sku---------------------------------------------------------------------------------------------------------------------->
+            oModel.setProperty("/aCMSWip", this._filteredData.aCMSWip);
 
-            this._createTable("CMSWIP", this._aOriginalCMSWipData);
+            this._createTable("CMSWIP", this._filteredData.aCMSWip);
 
             console.log("Filters Reset — Full SKU data restored");
         },
@@ -3809,10 +3813,10 @@ sap.ui.define([
             var sPackingSiteCode = (this.byId("cmsClosedFilterPackingSiteCode").getValue() || "").trim().toLowerCase();
 
 
-            var aSource = this._aOriginalCMSClosed;
-            console.log("kkkkkkkk-------->",aSource);
+            var aSource =   this._filteredData.aCMSClose;
+          
 
-            var oModel = this.getView().getModel("sku");
+            var oModel = this.getView().getModel("JSONModel");///////////sku---------------------------------------------------------------------------------------->
 
             if (!sGlobalSPCCode && !sPackingSiteSKU && !sPackingSiteCode) {
                 oModel.setProperty("/aCMSClose", aSource);
@@ -3838,10 +3842,10 @@ sap.ui.define([
             this.byId("cmsClosedFilterPackingSiteSKU").setValue("");
             this.byId("cmsClosedFilterPackingSiteCode").setValue("");
 
-            const oModel = this.getView().getModel("sku");
-            oModel.setProperty("/aCMSClose", this._aOriginalCMSClosed);
+            const oModel = this.getView().getModel("JSONModel");/////sku----------------------------------------------------------------------->
+            oModel.setProperty("/aCMSClose",   this._filteredData.aCMSClose);
 
-            this._createTable("CMSClosed", this._aOriginalCMSClosed);
+            this._createTable("CMSClosed",   this._filteredData.aCMSClose);
             console.log("Filters Reset — Full SKU data restored");
         },
 
